@@ -1,0 +1,47 @@
+# Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin4-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: pgadmin4
+  template:
+    metadata:
+      labels:
+        deployment: pgadmin4
+    spec:
+      containers:
+      - name: pgadmin4
+        image: dpage/pgadmin4:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PGADMIN_DEFAULT_EMAIL
+          value: postgres
+        - name: PGADMIN_DEFAULT_PASSWORD
+          value: postgres
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - name: pgadmin-v
+          mountPath: /var/lib/pgadmin
+      volumes:
+      - name: pgadmin-v
+        persistentVolumeClaim:
+          claimName: pgadmin-volume-claim
